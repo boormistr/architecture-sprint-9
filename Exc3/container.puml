@@ -1,0 +1,54 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(customer, "Клиент", "Пользователь системы для подачи заявок")
+Person(manager, "Менеджер кол-центра", "Управление заявками")
+Person(frontOffice, "Сотрудник фронт-офиса", "Идентификация и подтверждение заявок")
+Person(backOffice, "Сотрудник бэк-офиса", "Управление продуктами")
+Person(contractor, "Подрядчик", "Обновление и поддержка системы")
+Person(telecom, "Телеком-оператор", "Обслуживание СМС-шлюза")
+
+System_Boundary(internetBank, "Интернет-банк") {
+    Container(webInterface, "Веб-интерфейс", "HTML, CSS, JS", "Доступ клиента к системе")
+    Container(apiGateway, "API шлюз", "REST API", "Взаимодействие с другими системами")
+    Container(authModule, "Модуль аутентификации", "Java", "Обеспечение безопасности")
+    Container(applicationModule, "Модуль подачи заявок", "Java", "Обработка заявок")
+    Container(ratesModule, "Модуль отображения ставок", "Java", "Показ ставок клиенту")
+}
+
+System_Boundary(website, "Сайт") {
+    Container(siteWebInterface, "Веб-интерфейс", "HTML, CSS, JS", "Доступ клиента через сайт")
+    Container(siteRatesModule, "Модуль отображения ставок", "Java", "Показ ставок клиенту")
+    Container(siteApplicationModule, "Модуль подачи заявок", "Java", "Обработка заявок")
+}
+
+System_Boundary(callCenterSystem, "Система кол-центра") {
+    Container(crm, "CRM система", "CRM Platform", "Управление заявками и клиентами")
+    Container(requestProcessing, "Модуль обработки заявок", "Java", "Обработка входящих заявок")
+    Container(notificationModule, "Модуль уведомлений", "Java", "Отправка уведомлений")
+}
+
+Container_Boundary(abs, "АБС") {
+    Container(database, "База данных", "PostgreSQL", "Хранение данных о депозитах и кредитах")
+    Container(depositManagement, "Модуль управления депозитами", "Java", "Управление депозитами")
+    Container(creditManagement, "Модуль управления кредитами", "Java", "Управление кредитами")
+    Container(absApi, "API для интеграции", "REST API", "Интеграция с другими системами")
+}
+
+Container(smsGateway, "СМС-шлюз", "Java", "Отправка СМС")
+
+Rel(customer, webInterface, "Подача заявки на депозит", "HTTPS")
+Rel(customer, siteWebInterface, "Подача заявки на депозит", "HTTPS")
+Rel(webInterface, smsGateway, "Отправка СМС-кода", "HTTP")
+Rel(siteApplicationModule, requestProcessing, "Передача заявки", "HTTPS")
+Rel(manager, crm, "Обработка и управление заявками", "UI")
+Rel(requestProcessing, absApi, "Обработка заявки", "API")
+Rel(absApi, smsGateway, "Отправка СМС-уведомлений", "HTTP")
+Rel(frontOffice, depositManagement, "Идентификация и подтверждение депозитов", "UI")
+Rel(backOffice, depositManagement, "Управление депозитными продуктами", "UI")
+Rel(contractor, internetBank, "Поддержка и обновления", "Collaboration")
+Rel(telecom, smsGateway, "Обслуживание и поддержка", "Service Agreement")
+
+@enduml

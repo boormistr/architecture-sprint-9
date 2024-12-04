@@ -1,0 +1,42 @@
+@startuml
+!define RECTANGLE class
+
+skinparam rectangle {
+  BackgroundColor #E0FFE0
+  BorderColor black
+}
+
+actor Клиент
+actor "Сотрудник фронт-офиса" as FrontOffice
+actor "Сотрудник бэк-офиса" as BackOffice
+actor "Подрядчик" as Contractor
+actor "Телеком-оператор" as TelecomOperator
+
+rectangle "Интернет-банк" as InternetBank
+rectangle "АБС" as ABS
+rectangle "Система кол-центра" as CallCenterSystem
+rectangle "Партнёрский кол-центр" as PartnerCallCenter
+rectangle "СМС-шлюз" as SMSGateway
+rectangle "Сайт" as Website
+
+Клиент --> InternetBank : Открытие депозита
+Клиент --> Website : Подача заявки на депозит
+Website --> CallCenterSystem : Передача заявки
+CallCenterSystem --> BackOffice : Обработка заявки
+BackOffice --> ABS : Внесение депозита
+ABS --> SMSGateway : Отправка уведомления
+SMSGateway --> Клиент : СМС-оповещение
+
+FrontOffice --> ABS : Создание депозита
+FrontOffice --> Клиент : Выдача документов
+
+PartnerCallCenter --> CallCenterSystem : Передача обращений
+
+Contractor --> InternetBank : Обновление ядра системы
+Contractor --> CallCenterSystem : Поддержка системы
+TelecomOperator --> SMSGateway : Обслуживание СМС-шлюза
+
+BackOffice --> "Управление депозитами" : Анализ и расчет ставок
+BackOffice --> "Управление кредитами" : Анализ кредитного риска
+
+@enduml
