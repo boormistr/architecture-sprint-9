@@ -1,0 +1,32 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(customer, "Клиент", "Пользователь системы для подачи заявок на депозит")
+Person(frontOffice, "Сотрудник фронт-офиса", "Идентификация и подтверждение заявок")
+Person(backOffice, "Сотрудник бэк-офиса", "Управление депозитными продуктами")
+Person(contractor, "Подрядчик", "Поддержка и обновление системы")
+Person(telecomOperator, "Телеком-оператор", "Обслуживание и поддержка СМС-шлюза")
+
+System_Boundary(depositSystem, "Система открытия депозитов MVP") {
+    System(internetBank, "Интернет-банк", "Система подачи заявок через интернет")
+    System(website, "Сайт", "Подача заявок через веб-интерфейс")
+    System(callCenterSystem, "Система кол-центра", "Управление заявками")
+    System(abs, "АБС", "Автоматизированная банковская система")
+    System(smsGateway, "СМС-шлюз", "Система отправки СМС-уведомлений")
+}
+
+Rel(customer, internetBank, "Подача заявки на депозит", "HTTPS")
+Rel(customer, website, "Подача заявки на депозит", "HTTPS")
+Rel(internetBank, smsGateway, "Отправка СМС-кода", "HTTP")
+Rel(website, callCenterSystem, "Передача заявки", "HTTPS")
+Rel(callCenterSystem, abs, "Обработка заявки", "API")
+Rel(callCenterSystem, smsGateway, "Отправка уведомлений", "HTTP")
+Rel(abs, smsGateway, "Отправка СМС-уведомлений", "HTTP")
+Rel(frontOffice, abs, "Идентификация и подтверждение депозитов", "UI")
+Rel(backOffice, abs, "Управление депозитными продуктами", "UI")
+Rel(contractor, internetBank, "Поддержка и обновления", "Collaboration")
+Rel(telecomOperator, smsGateway, "Обслуживание и поддержка", "Service Agreement")
+
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(customer, "Клиент", "Подает заявки на депозит через Интернет-банк или Сайт")
+Person(callCenterManager, "Менеджер кол-центра", "Управляет заявками клиентов")
+Person(frontOffice, "Сотрудник фронт-офиса", "Подтверждает депозиты")
+Person(backOffice, "Сотрудник бэк-офиса", "Управляет депозитными продуктами")
+Person(partnerCallCenter, "Партнёрский кол-центр", "Получает экспортированные ставки")
+Person(contractor, "Подрядчик", "Поддерживает Интернет-банк")
+Person(telecomOperator, "Телеком-оператор", "Обеспечивает поддержку СМС-шлюза")
+
+System_Boundary(depositSystem, "Система открытия депозитов MVP") {
+    System(internetBank, "Интернет-банк", "Система подачи заявок через интернет")
+    System(website, "Сайт", "Система подачи заявок через веб")
+    System(callCenterSystem, "Система кол-центра", "Обработка и управление заявками")
+    System(abs, "АБС", "Автоматизированная банковская система")
+    System(smsGateway, "СМС-шлюз", "Отправка уведомлений через СМС")
+    System(fileServer, "Файловый Сервер", "Хранение экспортированных ставок")
+}
+
+Rel(customer, internetBank, "Подача заявки", "HTTPS")
+Rel(customer, website, "Подача заявки", "HTTPS")
+Rel(internetBank, smsGateway, "Отправка СМС-кода", "HTTP")
+Rel(website, callCenterSystem, "Передача заявки", "HTTPS")
+Rel(callCenterSystem, abs, "Обработка заявки", "API")
+Rel(callCenterSystem, smsGateway, "Отправка уведомлений", "HTTP")
+Rel(abs, smsGateway, "Отправка уведомлений", "HTTP")
+Rel(callCenterManager, callCenterSystem, "Управление заявками", "UI")
+Rel(frontOffice, abs, "Подтверждение депозитов", "UI")
+Rel(backOffice, abs, "Управление депозитами", "UI")
+Rel(partnerCallCenter, fileServer, "Получение ставок", "File Access")
+Rel(contractor, internetBank, "Поддержка", "Collaboration")
+Rel(telecomOperator, smsGateway, "Поддержка", "Service Agreement")
+
+@enduml
